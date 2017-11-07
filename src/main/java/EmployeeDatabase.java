@@ -15,7 +15,7 @@ public class EmployeeDatabase {
     /**
      * List of employees.
      */
-    public List<Employee> employees;
+    private List<Employee> employees;
 
     /**
      * Constructor which initializes the employees list.
@@ -30,10 +30,10 @@ public class EmployeeDatabase {
     /**
      * Returns the manager for the given employee.
      *
-     * @param employee
-     * @return
+     * @param employee name of the employee
+     * @return the name of the manager of the employee
      */
-    Employee findManager(final Employee employee) {
+    public Employee findManager(final Employee employee) {
         Employee manager = null;
         for (int i = 0; i < employees.size(); i++) {
             if (employees.get(i).getName() == employee.getManager()) {
@@ -56,6 +56,13 @@ public class EmployeeDatabase {
         /*
          * Implement this function
          */
+        int numberOfManagers = 0;
+        if (employee.getManager().equals("")) {
+            return 0;
+        }
+        Employee manager = findManager(employee);
+        numberOfManagers = 1 + countManagersAbove(manager);
+        return numberOfManagers;
     }
 
     /**
@@ -63,13 +70,42 @@ public class EmployeeDatabase {
      * <p>
      * Consider both a recursive and an iterative solution to this problem.
      *
-     * @param employee name of the employee
+     * @param employee name of the manager
      * @return int
      */
     public int countEmployeesUnder(final Employee employee) {
         /*
          * Implement this function
          */
+        int numberOfEmployees = 0;
+        boolean hasEmployee = false;
+        Employee lowerEmployee1 = null;
+        Employee lowerEmployee2 = null;
+        for (int i = 0; i < employees.size(); i++) {
+            if (employees.get(i).getManager().equals(employee.getName())) {
+                lowerEmployee1 = employees.get(i);
+                hasEmployee = true;
+                break;
+            }
+        }
+        for (int i = 0; i < employees.size(); i++) {
+            if (employees.get(i).getManager().equals(employee.getName())) {
+                if (!employees.get(i).getManager().equals(lowerEmployee1.getName())) {
+                    lowerEmployee2 = employees.get(i);
+                    break;
+                }
+            }
+        }
+        if (!hasEmployee) {
+            return 0;
+        }
+        if (lowerEmployee1 != null) {
+            numberOfEmployees = 1 + countEmployeesUnder(lowerEmployee1)
+            + countEmployeesUnder(lowerEmployee2);
+        } else {
+            numberOfEmployees = 1 + countEmployeesUnder(lowerEmployee1);
+        }
+        return numberOfEmployees;
     }
 
     /**
